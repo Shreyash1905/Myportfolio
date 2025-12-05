@@ -7,15 +7,16 @@ import { Projects } from "@/components/Projects";
 import { Achievements } from "@/components/Achievements";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
+import { StarField } from "@/components/StarField";
 
 const Index = () => {
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("theme");
       if (saved) return saved === "dark";
-      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+      return true; // Default to dark theme
     }
-    return false;
+    return true;
   });
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+      {isDark && <StarField />}
       <Navbar isDark={isDark} toggleTheme={toggleTheme} />
       <main>
         <Hero />
