@@ -1,7 +1,7 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState } from "react";
-import { ExternalLink, Layers, Award, X } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
+import { ExternalLink, Layers, Award, X, Train, ListTodo } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface Project {
@@ -49,6 +49,40 @@ const projects: Project[] = [
     ],
     icon: <Award className="w-8 h-8" />,
     gradient: "from-secondary to-primary",
+  },
+  {
+    id: 3,
+    title: "Redesigned IRCTC Website",
+    subtitle: "UI/UX Case Study",
+    description:
+      "A modern redesign of the IRCTC booking portal focusing on improved UX, simplified navigation, and an enhanced booking flow for a seamless user experience.",
+    tags: ["UI/UX Design", "Web App", "Prototyping", "Figma"],
+    highlights: [
+      "Modern & clean user interface",
+      "Simplified booking navigation",
+      "Enhanced user journey flow",
+      "Mobile-responsive layout",
+      "Accessibility improvements",
+    ],
+    icon: <Train className="w-8 h-8" />,
+    gradient: "from-orange-500 to-red-500",
+  },
+  {
+    id: 4,
+    title: "Internship Todo App",
+    subtitle: "Virtual Internship Project",
+    description:
+      "A productivity-focused To-Do application developed during a virtual internship. Features task management, categorization, and a clean, intuitive interface.",
+    tags: ["React", "Web App", "Productivity", "Internship"],
+    highlights: [
+      "Task creation and management",
+      "Category organization",
+      "Local storage persistence",
+      "Clean & intuitive UI",
+      "Responsive design",
+    ],
+    icon: <ListTodo className="w-8 h-8" />,
+    gradient: "from-blue-500 to-emerald-500",
   },
 ];
 
@@ -119,14 +153,45 @@ const ProjectCard = ({ project, onClick }: { project: Project; onClick: () => vo
   );
 };
 
+
 const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => void }) => {
+  // ESC Key & Body Scroll Lock
+  const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    // Lock scroll
+    document.body.style.overflow = "hidden";
+
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose();
+    };
+    window.addEventListener("keydown", handleEsc);
+
+    return () => {
+      // Restore scroll
+      document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleEsc);
+    };
+  }, []);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    // Slight delay to allow exit animation to start (handled by AnimatePresence in parent usually, 
+    // but here we are controlling state in parent. 
+    // The parent conditionally renders this component. 
+    // To ensure exit animation plays, we should ideally use AnimatePresence in parent.
+    // However, looking at usage: {selectedProject && <ProjectModal ... />}
+    // We can just call onClose directly and let Framer Motion's exit prop handle it IF wrapped in AnimatePresence.
+    // BUT the parent 'Projects' component does NOT use AnimatePresence wrapping the conditional render.
+    // So 'exit' animation wont play unless we add AnimatePresence there too. 
+    // For now, let's fix the functional requirements first: Scroll lock, ESC, etc.
+    onClose();
+  };
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/50 backdrop-blur-sm"
-      onClick={onClose}
+      onClick={handleClose}
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
@@ -139,11 +204,11 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
         {/* Header */}
         <div className={`h-40 bg-gradient-to-br ${project.gradient} relative`}>
           <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-2 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors"
+            onClick={handleClose}
+            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/20 backdrop-blur-md text-white hover:bg-black/40 transition-colors cursor-pointer"
             aria-label="Close modal"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 pointer-events-none" />
           </button>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="p-4 rounded-2xl bg-white/20 backdrop-blur-sm text-white">
@@ -188,7 +253,7 @@ const ProjectModal = ({ project, onClose }: { project: Project; onClose: () => v
           </div>
         </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -241,12 +306,15 @@ export const Projects = () => {
       </div>
 
       {/* Modal */}
-      {selectedProject && (
-        <ProjectModal
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-        />
-      )}
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectModal
+            key="modal"
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };

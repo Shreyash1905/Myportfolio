@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Moon, Sun } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface NavbarProps {
-  isDark: boolean;
-  toggleTheme: () => void;
-}
+interface NavbarProps { }
 
 const navLinks = [
   { name: "About", href: "#about" },
@@ -15,7 +12,7 @@ const navLinks = [
   { name: "Contact", href: "#contact" },
 ];
 
-export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
+export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -32,20 +29,25 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "glass shadow-md" : "bg-transparent"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "glass shadow-md" : "bg-transparent"
+        }`}
     >
       <div className="container-custom">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <motion.a
-            href="#"
-            className="font-display text-xl md:text-2xl font-bold text-foreground"
+          <motion.div
+            className="group flex flex-col items-start cursor-pointer"
             whileHover={{ scale: 1.02 }}
           >
-            <span className="gradient-text">Portfolio</span>
-          </motion.a>
+            <a href="#" className="flex flex-col">
+              <span className="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 pb-1">
+                Shreyash Sahukar
+              </span>
+              <span className="text-[10px] md:text-xs font-medium text-muted-foreground/80 bg-clip-text text-transparent bg-gradient-to-r from-slate-200 to-slate-400">
+                Turning Ideas into Modern Tech Experiences
+              </span>
+            </a>
+          </motion.div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
@@ -53,61 +55,37 @@ export const Navbar = ({ isDark, toggleTheme }: NavbarProps) => {
               <motion.a
                 key={link.name}
                 href={link.href}
-                className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium"
+                className="group relative font-medium py-1"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 whileHover={{ y: -2 }}
               >
-                {link.name}
+                <span className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-muted-foreground transition-all duration-300 group-hover:text-transparent">
+                  {link.name}
+                </span>
+                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
               </motion.a>
             ))}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="ml-2"
-              aria-label="Toggle theme"
+
+            {/* Hire Me - Styled as a Link per request */}
+            <motion.a
+              href="#contact"
+              className="group relative font-medium py-1"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: navLinks.length * 0.1 }}
+              whileHover={{ y: -2 }}
             >
-              <AnimatePresence mode="wait">
-                {isDark ? (
-                  <motion.div
-                    key="sun"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Sun className="h-5 w-5" />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="moon"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Moon className="h-5 w-5" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </Button>
-            <Button variant="hero" size="sm" asChild>
-              <a href="#contact">Hire Me</a>
-            </Button>
+              <span className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 bg-clip-text text-muted-foreground transition-all duration-300 group-hover:text-transparent">
+                Hire Me
+              </span>
+              <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 origin-left scale-x-0 transition-transform duration-300 group-hover:scale-x-100" />
+            </motion.a>
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-2 md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-            >
-              {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
             <Button
               variant="ghost"
               size="icon"

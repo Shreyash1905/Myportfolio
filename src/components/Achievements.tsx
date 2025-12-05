@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { Trophy, Star, Users } from "lucide-react";
+import { Trophy, Star, Users, Briefcase } from "lucide-react";
 
 const achievements = [
   {
@@ -21,6 +21,12 @@ const achievements = [
     title: "Creative Collaboration",
     description: "Enthusiastic about peer learning and team-based creative projects",
     color: "from-secondary to-teal-400",
+  },
+  {
+    icon: <Briefcase className="w-6 h-6" />,
+    title: "UI/UX Design Internship",
+    description: "Successfully completed a 1-month virtual internship in UI/UX Design at HyperionyX Technologies. Demonstrated strong commitment, professionalism.",
+    color: "from-indigo-500 to-violet-500",
   },
 ];
 
@@ -45,7 +51,7 @@ export const Achievements = () => {
           </h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           {achievements.map((achievement, index) => (
             <motion.div
               key={achievement.title}

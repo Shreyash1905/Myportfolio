@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { Code, Palette, Users, Wrench } from "lucide-react";
+import { Code, Palette, Brain, CheckCircle2, Briefcase, Users } from "lucide-react";
 
 interface Skill {
   name: string;
@@ -12,6 +12,8 @@ interface Skill {
 const technicalSkills: Skill[] = [
   { name: "UI/UX Design", percentage: 95 },
   { name: "HTML", percentage: 80 },
+  { name: "CSS", percentage: 60 },
+  { name: "JavaScript", percentage: 50 },
   { name: "C Programming", percentage: 80 },
   { name: "Java", percentage: 70 },
   { name: "C++", percentage: 60 },
@@ -28,12 +30,31 @@ const designTools = [
   "Design Thinking",
 ];
 
+const designHighlights = [
+  "UI/UX Case Study Creation",
+  "Usability Testing",
+  "Design System Building",
+  "Mobile App UI Design",
+];
+
+const professionalSkills = [
+  "Financial Advising",
+  "Critical Thinking",
+  "Analytical Thinking",
+  "Developer Mindset",
+  "Project Management",
+  "Decision Making",
+  "Fast Learner",
+  "Adaptability",
+];
+
 const softSkills = [
   "Team Collaboration",
+  "Communication Skills",
+  "Creativity",
   "Problem Solving",
   "Team Managing",
-  "Communication",
-  "Creativity",
+  "Empathy",
 ];
 
 const SkillBar = ({ skill, index }: { skill: Skill; index: number }) => {
@@ -75,6 +96,23 @@ const SkillTag = ({ skill, index }: { skill: string; index: number }) => {
     </motion.span>
   );
 };
+
+const SkillChip = ({ skill, index }: { skill: string; index: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, delay: index * 0.1 }}
+    whileHover={{ scale: 1.05, filter: "brightness(1.1)" }}
+    className="group flex items-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 border border-border/50 hover:border-primary/30 transition-all shadow-sm hover:shadow-md cursor-default relative overflow-hidden"
+  >
+    {/* Gradient overlay on hover */}
+    <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+    <CheckCircle2 className="w-4 h-4 text-primary relative z-10" />
+    <span className="font-medium text-foreground relative z-10">{skill}</span>
+  </motion.div>
+);
 
 export const Skills = () => {
   const ref = useRef(null);
@@ -139,10 +177,41 @@ export const Skills = () => {
                   Design Tools & UI/UX
                 </h3>
               </div>
-              <div className="bg-card rounded-2xl p-6 border border-border">
-                <div className="flex flex-wrap gap-3">
+              <div className="bg-card rounded-2xl p-6 border border-border h-full flex flex-col">
+                <div className="flex flex-wrap gap-3 mb-8">
                   {designTools.map((tool, index) => (
                     <SkillTag key={tool} skill={tool} index={index} />
+                  ))}
+                </div>
+
+                {/* Design Expertise Highlights */}
+                <div className="mt-auto pt-6 border-t border-border">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">
+                    Design Expertise Highlights
+                  </h4>
+                  <div className="flex flex-wrap gap-3">
+                    {designHighlights.map((highlight, index) => (
+                      <SkillChip key={highlight} skill={highlight} index={index} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Professional Skills */}
+            <motion.div variants={itemVariants} className="lg:col-span-2">
+              <div className="flex items-center gap-3 mb-8">
+                <div className="p-3 rounded-xl bg-accent">
+                  <Briefcase className="w-6 h-6 text-accent-foreground" />
+                </div>
+                <h3 className="font-display text-xl font-semibold text-foreground">
+                  Professional Skills
+                </h3>
+              </div>
+              <div className="bg-card rounded-2xl p-6 border border-border">
+                <div className="flex flex-wrap justify-center gap-4">
+                  {professionalSkills.map((skill, index) => (
+                    <SkillChip key={skill} skill={skill} index={index} />
                   ))}
                 </div>
               </div>
@@ -151,8 +220,8 @@ export const Skills = () => {
             {/* Soft Skills */}
             <motion.div variants={itemVariants} className="lg:col-span-2">
               <div className="flex items-center gap-3 mb-8">
-                <div className="p-3 rounded-xl bg-accent">
-                  <Users className="w-6 h-6 text-accent-foreground" />
+                <div className="p-3 rounded-xl bg-primary/10">
+                  <Users className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="font-display text-xl font-semibold text-foreground">
                   Soft Skills
@@ -161,17 +230,7 @@ export const Skills = () => {
               <div className="bg-card rounded-2xl p-6 border border-border">
                 <div className="flex flex-wrap justify-center gap-4">
                   {softSkills.map((skill, index) => (
-                    <motion.div
-                      key={skill}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                      transition={{ duration: 0.5, delay: index * 0.1 }}
-                      whileHover={{ scale: 1.05 }}
-                      className="flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-primary/5 to-secondary/5 border border-border"
-                    >
-                      <Wrench className="w-4 h-4 text-primary" />
-                      <span className="font-medium text-foreground">{skill}</span>
-                    </motion.div>
+                    <SkillChip key={skill} skill={skill} index={index} />
                   ))}
                 </div>
               </div>

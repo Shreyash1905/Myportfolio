@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/button";
 import emailjs from "@emailjs/browser";
 
 // EmailJS Configuration - Replace with your actual credentials
-const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID || "YOUR_SERVICE_ID";
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || "YOUR_TEMPLATE_ID";
-const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "YOUR_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID = "service_20vjhyhk";
+const EMAILJS_TEMPLATE_ID = "template_roij1oc";
+const EMAILJS_PUBLIC_KEY = "lnA_tuMccqtOGRMPq";
 
 interface FormData {
   name: string;
   email: string;
-  subject: string;
+  title: string;
   message: string;
 }
 
@@ -33,7 +33,7 @@ export const Contact = () => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
-    subject: "",
+    title: "",
     message: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
@@ -70,35 +70,36 @@ export const Contact = () => {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) return;
+    if (!formRef.current) return;
 
     setStatus("sending");
 
-    try {
-      // Initialize EmailJS
-      emailjs.init(EMAILJS_PUBLIC_KEY);
-
-      // Send email
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        from_name: formData.name,
-        from_email: formData.email,
-        subject: formData.subject || "Portfolio Contact",
-        message: formData.message,
-      });
-
-      setStatus("success");
-      setFormData({ name: "", email: "", subject: "", message: "" });
-
-      // Reset status after 5 seconds
-      setTimeout(() => setStatus("idle"), 5000);
-    } catch (error) {
-      console.error("EmailJS error:", error);
-      setStatus("error");
-      setTimeout(() => setStatus("idle"), 5000);
-    }
+    emailjs
+      .sendForm(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        formRef.current,
+        EMAILJS_PUBLIC_KEY
+      )
+      .then(
+        (result) => {
+          console.log("SUCCESS:", result.text);
+          setStatus("success");
+          setFormData({ name: "", email: "", title: "", message: "" });
+          formRef.current?.reset();
+          // Reset status after 5 seconds
+          setTimeout(() => setStatus("idle"), 5000);
+        },
+        (error) => {
+          console.error("FAILED:", error);
+          setStatus("error");
+          setTimeout(() => setStatus("idle"), 5000);
+        }
+      );
   };
 
   return (
@@ -145,9 +146,8 @@ export const Contact = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg bg-background border ${
-                    errors.name ? "border-destructive" : "border-border"
-                  } text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all`}
+                  className={`w-full px-4 py-3 rounded-lg bg-background border ${errors.name ? "border-destructive" : "border-border"
+                    } text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all`}
                   placeholder="John Doe"
                   aria-describedby={errors.name ? "name-error" : undefined}
                 />
@@ -171,9 +171,8 @@ export const Contact = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 rounded-lg bg-background border ${
-                    errors.email ? "border-destructive" : "border-border"
-                  } text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all`}
+                  className={`w-full px-4 py-3 rounded-lg bg-background border ${errors.email ? "border-destructive" : "border-border"
+                    } text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all`}
                   placeholder="john@example.com"
                   aria-describedby={errors.email ? "email-error" : undefined}
                 />
@@ -187,14 +186,14 @@ export const Contact = () => {
 
               {/* Subject Field (Optional) */}
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="title" className="block text-sm font-medium text-foreground mb-2">
                   Subject (Optional)
                 </label>
                 <input
                   type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
+                  id="title"
+                  name="title"
+                  value={formData.title}
                   onChange={handleChange}
                   className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
                   placeholder="Project Collaboration"
@@ -213,9 +212,8 @@ export const Contact = () => {
                   value={formData.message}
                   onChange={handleChange}
                   rows={5}
-                  className={`w-full px-4 py-3 rounded-lg bg-background border ${
-                    errors.message ? "border-destructive" : "border-border"
-                  } text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none`}
+                  className={`w-full px-4 py-3 rounded-lg bg-background border ${errors.message ? "border-destructive" : "border-border"
+                    } text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none`}
                   placeholder="Tell me about your project or idea..."
                   aria-describedby={errors.message ? "message-error" : undefined}
                 />
@@ -267,7 +265,7 @@ export const Contact = () => {
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-center text-sm text-green-600 dark:text-green-400"
+                  className="text-center text-sm text-green-600 dark:text-green-400 font-medium"
                 >
                   Thank you for your message! I'll get back to you soon.
                 </motion.p>
@@ -276,9 +274,9 @@ export const Contact = () => {
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-center text-sm text-destructive"
+                  className="text-center text-sm text-destructive font-medium"
                 >
-                  Something went wrong. Please try again or email me directly.
+                  Something went wrong. Please try again or email me directly at shreyaswadi987@gmail.com
                 </motion.p>
               )}
             </div>
