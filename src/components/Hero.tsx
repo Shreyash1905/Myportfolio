@@ -43,7 +43,7 @@ export const Hero = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight"
           >
-            I'm a{" "}
+            Hello, I'm a{" "}
             <span className="gradient-text">UI/UX</span>
             <br />
             <span className="gradient-text-accent">Full Stack Developer</span>
